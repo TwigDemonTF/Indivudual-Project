@@ -1,5 +1,7 @@
 ﻿namespace ReactorApi.Models
 {
+    // add-migration "migration message here"
+    // update-database
     public class Reactor
     {
         public int Id { get; set; }

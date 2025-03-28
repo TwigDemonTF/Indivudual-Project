@@ -11,5 +11,8 @@ namespace ReactorApi.Data
         }
 
         public DbSet<Reactor> Reactors { get; set; }
+        public DbSet<ReactorValues> ReactorsValues { get; set; }
+        public DbSet<ReactorData> ReactorDatas { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
