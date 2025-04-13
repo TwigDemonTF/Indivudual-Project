@@ -1,0 +1,54 @@
+@use "../abstracts" as *;
+
+body {
+    background-color: map-get($colors, primary);
+    font-family: $fontTypeLogo;
+}
+
+#nav {
+    margin: 0;
+    padding: 0 !important;
+    width: 100vw;
+    height: 5%;
+    border-bottom: map-get($colors, accent) 2px solid;
+    display: flex;
+    align-items: center;
+    padding-left: .75%;
+    color: white;
+
+    ul {
+        margin-left: 1%;
+        padding: 0;
+        list-style: none;
+        width: 100%;
+        display: flex;
+
+        li {
+            color: white;
+            font-size: 1.22rem;
+
+            &:not(:first-child) {
+                margin-left: calc($baseMargin + 12.5px);
+            }
+
+            &:hover {
+                color: map-get($colors, accent);
+                transition: 1.25s;
+            }
+
+            a {
+                text-decoration: none;
+            }
+        }
+    }
+
+    #navBarList {
+        color: var(--accent-light);
+        width: 240px;
+
+        a {
+            display: block;
+            width: max-content;
+        }
+    }
+}

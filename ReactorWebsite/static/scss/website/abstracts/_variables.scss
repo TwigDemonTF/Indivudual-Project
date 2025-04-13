@@ -1,1 +1,12 @@
-$primary-color: #1A1A1A;
+$colors: (
+    primary: #1A1A1A,
+    secondary: #2B3035,
+    accent: #FF69B4,
+    white: #FFFFFF,
+    gray: #808080,
+    purple: #BD9CD9,
+);
+
+$baseMargin: 1%;
+$fontTypeLogo: "Junge", cursive;
+$borderRadius: 12.5px;

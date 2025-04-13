@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -76,6 +77,7 @@ namespace ReactorApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Reactor>> PostReactor(Reactor reactor)
         {
+            Console.WriteLine(reactor);
             database.Reactors.Add(reactor);
             await database.SaveChangesAsync();
 
