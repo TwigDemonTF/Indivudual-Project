@@ -1,0 +1,6 @@
+@ReactorAPI_HostAddress = http://localhost:5168
+
+GET {{ReactorAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
