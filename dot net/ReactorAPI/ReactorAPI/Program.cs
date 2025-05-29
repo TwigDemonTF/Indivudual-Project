@@ -13,7 +13,9 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ReactorService>();
 builder.Services.AddScoped<IUserRespository, UserRepository>();
+builder.Services.AddScoped<IReactorRepository, ReactorRepository>();
 
 var app = builder.Build();
 
@@ -23,8 +25,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
 
 
 app.UseHttpsRedirection();
