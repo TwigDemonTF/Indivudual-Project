@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Logic.Interfaces.Repositories
 {
-    public interface IUserRespository
+    public interface IUserRepository
     {
         UserDTO GetUser(int id);
         Task CreateUser(int id, string name, string email, string password);

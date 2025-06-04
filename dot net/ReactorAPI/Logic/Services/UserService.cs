@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 
 namespace Logic.Services
 {
-    public class UserService : IUserService
+    /// <summary>
+    /// 
+    /// </summary>
+    public class UserService : IUserInterface
     {
-        private readonly IUserRespository _repository;
-        public UserService(IUserRespository respository)
+        private readonly IUserRepository _repository;
+        public UserService(IUserRepository respository)
         {
             _repository = respository;
         }
@@ -20,6 +23,7 @@ namespace Logic.Services
         {
             return _repository.CreateUser(id, name, email, password);
         }
+
 
         public UserDTO GetUser(int id)
         {

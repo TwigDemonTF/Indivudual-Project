@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Logic.Services
 {
-    public class ReactorService : IReactorService
+    public class ReactorService : IReactorRepository
     {
         private readonly IReactorRepository? _repository;
 

@@ -13,13 +13,8 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class UserRepository : BaseRepository, IUserRespository
+    public class UserRepository : BaseRepository, IUserRepository
     {
-        private int id;
-        private string? name;
-        private string? email;
-        private string? password;
-
         async public Task CreateUser(int id, string name, string email, string password)
         {
             await using var conn = GetSqlConnection();

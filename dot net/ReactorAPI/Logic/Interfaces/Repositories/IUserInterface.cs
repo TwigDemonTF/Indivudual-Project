@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.Services
+namespace Logic.Interfaces.Repositories
 {
-    public interface IUserService
+    public interface IUserInterface
     {
         UserDTO GetUser(int id);
         Task CreateUser(int id, string name, string email, string password);
