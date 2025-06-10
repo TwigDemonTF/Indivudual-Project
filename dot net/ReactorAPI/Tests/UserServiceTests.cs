@@ -1,11 +1,10 @@
 ﻿using Xunit;
 using Moq;
 using Logic.Services;
-using Logic.Interfaces.Repositories;
-using System;
 using Logic.DTO_s;
+using Logic.Interfaces.Repositories;
 
-namespace Tests
+namespace UnitTests
 {
     public class UserServiceTests
     {
@@ -13,7 +12,6 @@ namespace Tests
         public void AuthenticateUser_WithValidCredentials_ReturnsUserDTO()
         {
             // Arrange
-            var mockRepo = new Mock<IUserRepository>();
             var loginDto = new LoginDTO
             {
                 Email = "test@example.com",
@@ -23,13 +21,20 @@ namespace Tests
             var expectedUser = new UserDTO
             {
                 Id = 1,
-                Email = loginDto.Email,
+                Email = "test@example.com",
+                Password = "password123",
                 minecraftUsername = "TestUser",
-                Password = loginDto.Password,
                 reactorId = 0
             };
 
-            mockRepo.Setup(r => r.AuthenticateUser(loginDto)).Returns(expectedUser);
+            // Create a mock repository
+            var mockRepo = new Mock<IUserRepository>();
+
+            // Set up the mock to return the expected user when AuthenticateUser is called
+            mockRepo.Setup(repo => repo.AuthenticateUser(loginDto))
+                    .Returns(expectedUser);
+
+            // Inject the mock into the service
             var userService = new UserService(mockRepo.Object);
 
             // Act
@@ -38,6 +43,7 @@ namespace Tests
             // Assert
             Assert.NotNull(result);
             Assert.Equal(expectedUser.Email, result.Email);
+            Assert.Equal(expectedUser.Password, result.Password);
             Assert.Equal(expectedUser.minecraftUsername, result.minecraftUsername);
         }
     }
