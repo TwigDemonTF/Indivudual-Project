@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactorAPI", "ReactorAPI\ReactorAPI.csproj", "{E815D2B8-425A-4A0C-B2F4-AED81E44A2A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactorAPI", "ReactorAPI\ReactorAPI.csproj", "{E815D2B8-425A-4A0C-B2F4-AED81E44A2A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{0F3C7E08-8E35-42DF-B042-9CD92B074C0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{0F3C7E08-8E35-42DF-B042-9CD92B074C0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic", "Logic\Logic.csproj", "{773AC6A1-8031-4133-BD23-9666D06B17A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic", "Logic\Logic.csproj", "{773AC6A1-8031-4133-BD23-9666D06B17A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{680F844B-11FA-4CFF-8BCA-188711454C63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{773AC6A1-8031-4133-BD23-9666D06B17A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{773AC6A1-8031-4133-BD23-9666D06B17A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{773AC6A1-8031-4133-BD23-9666D06B17A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{680F844B-11FA-4CFF-8BCA-188711454C63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{680F844B-11FA-4CFF-8BCA-188711454C63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{680F844B-11FA-4CFF-8BCA-188711454C63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{680F844B-11FA-4CFF-8BCA-188711454C63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
