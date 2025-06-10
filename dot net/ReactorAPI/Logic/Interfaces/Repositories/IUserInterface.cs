@@ -10,6 +10,7 @@ namespace Logic.Interfaces.Repositories
     public interface IUserInterface
     {
         UserDTO GetUser(int id);
-        Task CreateUser(int id, string name, string email, string password);
+        Task<UserDTO> CreateUser(RegisterDTO registerDto);
+        UserDTO AuthenticateUser(LoginDTO loginDto);
     }
 }

@@ -43,7 +43,7 @@ body {
     }
 
     #navBarList {
-        color: var(--accent-light);
+        color: map-get($colors, accent);
         width: 240px;
 
         a {

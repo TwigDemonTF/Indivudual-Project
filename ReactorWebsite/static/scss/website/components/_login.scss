@@ -1,0 +1,46 @@
+@use "../abstracts/" as *;
+
+#loginWrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding-top: 7.5%;
+
+    #loginContainer {
+        padding: 5px;
+        width: 15%;
+        height: 20rem;
+        border: 3px solid map-get($colors, accent);
+        border-radius: 2.25rem 2.25rem $borderRadius $borderRadius;
+        text-align: center;
+        box-shadow: 1px 12px 25px rgb(0 0 0 / 78%);
+
+        #loginErrorText {
+            color: map-get($colors, white);
+            position: absolute;
+        }
+
+        #loginMainHeader {
+            color: map-get($colors, white);
+            margin-top: 0;
+            font-size: 2.5rem;
+            border-bottom: solid 2px map-get($colors, accent);
+            padding: 10px 40px;
+        }
+
+        #loginForm {
+            margin: 0;
+            width: 100%;
+            height: 80%;
+            display: flex;
+            flex-direction: column-reverse;
+
+            & >input {
+                @include accentInput($borderRadius);
+                height: 15%;
+                margin-bottom: 12.5px;
+            } 
+        }
+    }
+}

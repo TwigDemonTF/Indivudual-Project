@@ -15,18 +15,42 @@ namespace Data
 {
     public class UserRepository : BaseRepository, IUserRepository
     {
-        async public Task CreateUser(int id, string name, string email, string password)
+        public async Task<UserDTO> CreateUser(RegisterDTO registerDto)
         {
-            await using var conn = GetSqlConnection();
+            const string sql = @"
+                INSERT INTO ""User"" (""minecraftUsername"", email, password, ""reactorId"")
+                VALUES (@MinecraftUsername, @Email, @Password, @ReactorId)
+                RETURNING id, email, ""minecraftUsername"", password, ""reactorId"";
+            ";
 
-            var cmd = new NpgsqlCommand("", conn);
+            await using var conn = GetSqlConnection();
+            await conn.OpenAsync();
+
+            await using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("MinecraftUsername", registerDto.minecraftUsername ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("Email", registerDto.Email ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("Password", registerDto.Password ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("ReactorId", 0); // force initialize to 0
 
             await using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new UserDTO
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                    Email = reader.GetString(reader.GetOrdinal("email")),
+                    minecraftUsername = reader.GetString(reader.GetOrdinal("minecraftUsername")),
+                    Password = reader.GetString(reader.GetOrdinal("password")),
+                    reactorId = reader.GetInt32(reader.GetOrdinal("reactorId"))
+                };
+            }
+
+            return null;
         }
 
         public UserDTO GetUser(int id)
         {
-            string sql = "SELECT id, email, \"minecraftUsername\", password FROM \"User\" WHERE id = @Id";
+            string sql = "SELECT * FROM \"User\" WHERE id = @Id";
 
             using var conn = GetSqlConnection();
             conn.Open();
@@ -42,7 +66,28 @@ namespace Data
             }
 
             Console.WriteLine(MapToUserDTO(reader));
-            throw new Exception("Dead man");
+            throw new Exception("No User Found");
+        }
+
+        public UserDTO AuthenticateUser(LoginDTO loginDto)
+        {
+            string sql = "SELECT * FROM \"User\" WHERE email = @Email AND password = @Password";
+
+            using var conn = GetSqlConnection();
+            conn.Open();
+
+            using var command = conn.CreateCommand();
+            command.CommandText = sql;
+            command.Parameters.AddWithValue("Email", loginDto.Email);
+            command.Parameters.AddWithValue("Password", loginDto.Password);
+
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                return MapToUserDTO(reader);
+            }
+
+            throw new Exception("Invalid Credentials");
         }
 
         private UserDTO MapToUserDTO(NpgsqlDataReader reader)

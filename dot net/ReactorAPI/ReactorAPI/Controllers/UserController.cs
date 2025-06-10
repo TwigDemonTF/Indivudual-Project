@@ -50,17 +50,37 @@ namespace ReactorAPI.Controllers
         }
 
         // POST: UserController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [HttpPost("User/Login")]
+        public ActionResult Login([FromBody] LoginDTO loginDto)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                UserDTO? userDto = _userService.AuthenticateUser(loginDto);
+                if (userDto == null) {
+                    return Unauthorized(new { message = "Invalid credentials" });
+                }
+                return Ok(new { message = "Login Successful", user = userDto});
+
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, "Login Failed");
+            }
+        }
+
+        [HttpPost("User/Register")]
+        public async Task<ActionResult> Register([FromBody] RegisterDTO registerDto)
+        {
+            try
+            {
+                UserDTO? userDto = await _userService.CreateUser(registerDto); // 👈 await async call
+                return Ok(new { message = "Register Successful" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, "Register Failed");
             }
         }
 

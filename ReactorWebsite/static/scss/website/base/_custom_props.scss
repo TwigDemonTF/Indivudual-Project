@@ -2,8 +2,8 @@
 @use "../abstracts/" as *;
 
 :root {
-    @each $name, $value in $colors {
-        --#{$name}-light: #{$value};
-        --#{$name}-dark: #{color.adjust($value, $lightness: -20%)};
-    }
+    // @each $name, $value in $colors {
+    //     --#{$name}-light: #{$value};
+    //     --#{$name}-dark: #{color.adjust($value, $lightness: -20%)};
+    // }
 }

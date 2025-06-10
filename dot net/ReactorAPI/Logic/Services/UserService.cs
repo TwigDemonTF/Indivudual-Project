@@ -19,15 +19,20 @@ namespace Logic.Services
             _repository = respository;
         }
 
-        public Task CreateUser(int id, string name, string email, string password)
+        public Task<UserDTO> CreateUser(RegisterDTO registerDto)
         {
-            return _repository.CreateUser(id, name, email, password);
+            return _repository.CreateUser(registerDto);
         }
 
 
         public UserDTO GetUser(int id)
         {
             return _repository.GetUser(id);
+        }
+
+        public UserDTO AuthenticateUser(LoginDTO loginDto)
+        {
+            return _repository.AuthenticateUser(loginDto);
         }
     }
 }

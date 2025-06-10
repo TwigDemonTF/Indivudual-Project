@@ -1,0 +1,13 @@
+@use "variables" as *;
+
+@mixin accentInput($borderRadius) {
+    color: map-get($colors, accent);
+    background-color: map-get($colors, secondary);
+    border: 1px solid map-get($colors, accent);
+    border-radius: $borderRadius;
+
+    &:focus {
+        outline: none;
+        border: 1px solid map-get($colors, accent);
+    }
+}

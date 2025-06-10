@@ -1,0 +1,24 @@
+{% include "../components/nav.html" %}
+
+<head>
+    <title>Login</title>
+</head>
+
+<html>
+    <body>    
+        <div id="loginWrapper">
+            <div id="loginContainer" class="lightShadow">
+                <h1 id="loginMainHeader" class="colorAccent">Login</h2>
+                {% if error %}
+                <p id="loginErrorText">* {{error}}</p>
+                {% endif %}
+                <form id="loginForm" action="#" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="Login">
+                    <input type="password" name="password" placeholder="Password" required>
+                    <input type="text" name="email" placeholder="Email" required>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
