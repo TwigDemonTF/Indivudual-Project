@@ -98,6 +98,7 @@ namespace Data
                 minecraftUsername = Convert.ToString(reader["minecraftUsername"]) ?? string.Empty,
                 Email = Convert.ToString(reader["email"]) ?? string.Empty,
                 Password = Convert.ToString(reader["password"]) ?? string.Empty,
+                reactorId = Convert.ToInt32(reader["reactorId"]),
             };
         }
     }
