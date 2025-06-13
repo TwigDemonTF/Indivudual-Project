@@ -1,0 +1,69 @@
+{% include "../components/nav.html" %}
+
+<body onload="connectToReactor()">
+    
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const connectToReactor = () => {
+        Swal.fire({
+            title: 'Connect to your reactor by its Computercraft ID',
+            input: 'text',
+            inputPlaceholder: 'Enter Computercraft ID',
+            showCancelButton: true,
+            confirmButtonText: 'Connect',
+            cancelButtonText: 'Cancel',
+            preConfirm: (id) => {
+                if (!id || id.trim() === '') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'invalid ID',
+                        text: "Please enter a valid Computercraft ID",
+                        confirmButtonText: 'OK',
+                    })
+                }
+            }
+        }).then((result) => {
+             if (result.isConfirmed) {
+                const reactorId = result.value.trim();
+                fetch('/Reactor/Connect/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ reactorId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Connected',
+                            text: `Successfully connected to reactor ${reactorId}`,
+                            confirmButtonText: 'OK',
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Connection Failed',
+                            text: data.message || 'An error occurred while connecting to the reactor.',
+                            confirmButtonText: 'OK',
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `An error occurred: ${error.message}`,
+                        confirmButtonText: 'OK',
+                    });
+                });
+        }
+    });
+    }
+    
+
+</script>

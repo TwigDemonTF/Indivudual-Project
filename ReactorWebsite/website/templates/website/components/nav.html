@@ -5,8 +5,9 @@
         <li><a href="/">Reactor Tracker</a></li>
         <li><a href="/Login/">Login</a></li>
         <li><a href="/Register/">Register</a></li>
-        {% if user.is_authenticated %}
-
+        {% if request.session.userId %}
+        <li><a href="/Reactor/">Reactor</a></li>
+        <li><a href="/Logout/">Logout</a></li>
         {% endif %}
     </ul>
 </nav>

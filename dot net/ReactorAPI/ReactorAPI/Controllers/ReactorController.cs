@@ -24,8 +24,8 @@ namespace ReactorAPI.Controllers
         }
 
         // GET api/<ReactorController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{userId}")]
+        public string Get(int userId)
         {
             return "value";
         }

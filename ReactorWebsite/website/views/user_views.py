@@ -30,6 +30,7 @@ def login(request) -> HttpResponse:
             if res.status_code == 200:
                 request.session['minecraftUsername'] = res.json()['user']['minecraftUsername']
                 request.session['email'] = res.json()['user']['email']
+                request.session['userId'] = res.json()['user']['id']
                 if res.json()['user']['reactorId'] != 0:
                     print(res.json()['user']['reactorId'])
                     request.session['reactorId'] = res.json()['user']['reactorId']

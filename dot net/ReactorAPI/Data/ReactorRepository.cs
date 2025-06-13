@@ -15,5 +15,10 @@ namespace Data
         {
             throw new NotImplementedException();
         }
+
+        public ReactorDTO GetReactor(int userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

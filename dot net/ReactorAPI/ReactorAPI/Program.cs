@@ -17,6 +17,7 @@ builder.Services.AddScoped<ReactorService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserInterface, UserService>();
 builder.Services.AddScoped<IReactorRepository, ReactorRepository>();
+builder.Services.AddScoped<IReactorInterface, ReactorService>();
 
 var app = builder.Build();
 
