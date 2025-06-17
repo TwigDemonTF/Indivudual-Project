@@ -34,6 +34,36 @@ namespace Data
             await cmd.ExecuteNonQueryAsync();
         }
 
+        public List<ReactorStatusDTO> GetLatestReactorData(DateTime fromUtc, int reactorId)
+        {
+            const string query = @"SELECT * FROM ""ReactorHistory"" 
+                           WHERE ""timeStamp"" > @FromUtc AND ""reactorId"" = @ReactorId";
+
+            using var conn = GetSqlConnection();
+            conn.Open();
+
+            using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("FromUtc", fromUtc);
+            cmd.Parameters.AddWithValue("ReactorId", reactorId);
+
+            using var reader = cmd.ExecuteReader();
+            var results = new List<ReactorStatusDTO>();
+
+            while (reader.Read())
+            {
+                results.Add(new ReactorStatusDTO
+                {
+                    TimeStamp = reader.GetDateTime(reader.GetOrdinal("timeStamp")),
+                    Temperature = reader.GetDouble(reader.GetOrdinal("temperature")),
+                    FieldStrength = reader.GetDouble(reader.GetOrdinal("fieldStrength")),
+                    EnergySaturation = reader.GetDouble(reader.GetOrdinal("energySaturation")),
+                    FuelExhaustion = reader.GetDouble(reader.GetOrdinal("fuelExhaustion")),
+                    ReactorId = reader.GetInt32(reader.GetOrdinal("reactorId"))
+                });
+            }
+
+            return results;
+        }
 
         public ReactorDTO GetReactor(int userId)
         {

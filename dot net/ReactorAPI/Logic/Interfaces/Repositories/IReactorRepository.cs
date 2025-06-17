@@ -23,5 +23,7 @@ namespace Logic.Interfaces.Repositories
         /// </summary>
         /// <param name="userId">The ID of the user whose reactor is requested.</param>
         ReactorDTO GetReactor(int userId);
+
+        List<ReactorStatusDTO> GetLatestReactorData(DateTime fromUtc, int reactorId);
     }
 }

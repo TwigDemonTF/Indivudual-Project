@@ -23,6 +23,11 @@ namespace Logic.Services
             return _repository.AddReactorData(reactorHistoryDto);
         }
 
+        public List<ReactorStatusDTO> GetLatestReactorData(DateTime fromUtc, int reactorId)
+        {
+            return _repository.GetLatestReactorData(fromUtc, reactorId);
+        }
+
         public ReactorDTO GetReactor(int userId)
         {
             throw new NotImplementedException();

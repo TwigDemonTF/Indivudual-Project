@@ -11,5 +11,6 @@ namespace Logic.Interfaces.Repositories
     {
         Task AddReactorData(ReactorHistoryDTO reactorHistoryDto);
         ReactorDTO GetReactor(int userId);
+        List<ReactorStatusDTO> GetLatestReactorData(DateTime fromUtc, int reactorId);
     }
 }

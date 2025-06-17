@@ -57,5 +57,51 @@ namespace ReactorAPI.Controllers
         public void Delete(int id)
         {
         }
+
+        [HttpGet("Latest")]
+        public IActionResult GetLatestData([FromQuery] int reactorId)
+        {
+            if (reactorId <= 0)
+                return BadRequest(new { error = "Invalid reactorId" });
+
+            // Get Amsterdam timezone safely (Linux and Windows support)
+            var amsterdamTimeZone = GetTimeZone("Europe/Amsterdam");
+
+            // Current time in Amsterdam
+            var amsterdamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, amsterdamTimeZone);
+
+            // Get cutoff (24 hours ago in Amsterdam time)
+            var amsterdam24HoursAgo = amsterdamNow.AddHours(-24);
+
+            // Convert to UTC for database querying
+            var cutoffUtc = TimeZoneInfo.ConvertTimeToUtc(amsterdam24HoursAgo, amsterdamTimeZone);
+
+            // Filter by reactorId and time
+            var recentData = _reactorService.GetLatestReactorData(cutoffUtc, reactorId)
+                .Where(r => r.TimeStamp > cutoffUtc && r.ReactorId == reactorId)
+                .OrderBy(r => r.TimeStamp)
+                .ToList();
+
+            if (recentData == null || !recentData.Any())
+                return NotFound(new { error = "No data available" });
+
+            return Ok(recentData);
+        }
+
+        private static TimeZoneInfo GetTimeZone(string timezoneId)
+        {
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(timezoneId); // For Linux/Mac
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                // Map Linux/IANA -> Windows timezones manually if needed
+                if (timezoneId == "Europe/Amsterdam")
+                    return TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time"); // For Windows
+
+                throw;
+            }
+        }
     }
 }
