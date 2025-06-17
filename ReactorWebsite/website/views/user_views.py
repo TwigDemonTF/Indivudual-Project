@@ -15,7 +15,7 @@ def register(request) -> HttpResponse:
         }
         res = requests.post("http://localhost:5168/User/Register", json=data, verify=False)
         if res.status_code == 200:
-            return render(request, 'website/main/index.html', context={})
+            return redirect('/Login')
     return render (request, 'website/user/register.html')
 
 def login(request) -> HttpResponse:

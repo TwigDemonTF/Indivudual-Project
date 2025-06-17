@@ -13,8 +13,15 @@ using System.Threading.Tasks;
 
 namespace Data
 {
+    /// <summary>
+    /// Handles user-related database operations using PostgreSQL.
+    /// </summary>
     public class UserRepository : BaseRepository, IUserRepository
     {
+        /// <summary>
+        /// Creates a new user and stores them in the database.
+        /// </summary>
+        /// <param name="registerDto">User registration data.</param>
         public async Task<UserDTO> CreateUser(RegisterDTO registerDto)
         {
             const string sql = @"
@@ -48,6 +55,10 @@ namespace Data
             return null;
         }
 
+        /// <summary>
+        /// Retrieves a user by their ID.
+        /// </summary>
+        /// <param name="id">User ID.</param>
         public UserDTO GetUser(int id)
         {
             string sql = "SELECT * FROM \"User\" WHERE id = @Id";
@@ -69,6 +80,10 @@ namespace Data
             throw new Exception("No User Found");
         }
 
+        /// <summary>
+        /// Authenticates a user by checking email and password.
+        /// </summary>
+        /// <param name="loginDto">Login credentials.</param>
         public UserDTO AuthenticateUser(LoginDTO loginDto)
         {
             string sql = "SELECT * FROM \"User\" WHERE email = @Email AND password = @Password";
@@ -89,6 +104,11 @@ namespace Data
 
             throw new Exception("Invalid Credentials");
         }
+
+        /// <summary>
+        /// Updates a user’s record to associate them with a reactor.
+        /// </summary>
+        /// <param name="dto">User ID and reactor ID binding data.</param>
         public async Task<bool> BindReactorToUser(BindReactorDTO dto)
         {
             const string sql = @"

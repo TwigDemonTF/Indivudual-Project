@@ -7,6 +7,9 @@ using System.Diagnostics;
 
 namespace ReactorAPI.Controllers
 {
+    /// <summary>
+    /// Handles user-related HTTP requests such as login, registration, user info retrieval, and reactor binding.
+    /// </summary>
     public class UserController : Controller
     {
         private readonly UserService _userService;
@@ -23,6 +26,9 @@ namespace ReactorAPI.Controllers
         }
 
         // GET: UserController/Details/5
+        /// <summary>
+        /// Retrieves the details of a user by ID.
+        /// </summary>
         [HttpGet("User/Details/{id}")]
         public ActionResult<UserDTO> Details(int id)
         {
@@ -50,6 +56,9 @@ namespace ReactorAPI.Controllers
         }
 
         // POST: UserController/Create
+        /// <summary>
+        /// Authenticates a user with email and password.
+        /// </summary>
         [HttpPost("User/Login")]
         public ActionResult Login([FromBody] LoginDTO loginDto)
         {
@@ -70,6 +79,9 @@ namespace ReactorAPI.Controllers
         }
 
         [HttpPost("User/Register")]
+        /// <summary>
+        /// Registers a new user account.
+        /// </summary>
         public async Task<ActionResult> Register([FromBody] RegisterDTO registerDto)
         {
             try
@@ -85,6 +97,9 @@ namespace ReactorAPI.Controllers
         }
 
         // GET: UserController/Edit/5
+        /// <summary>
+        /// Binds a user to a reactor using the provided reactor ID and user ID.
+        /// </summary>
         [HttpPost("User/BindReactor")]
         public async Task<IActionResult> BindToReactor([FromBody] BindReactorDTO bindReactorDto)
         {
