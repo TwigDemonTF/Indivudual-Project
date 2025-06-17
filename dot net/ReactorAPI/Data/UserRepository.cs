@@ -89,6 +89,24 @@ namespace Data
 
             throw new Exception("Invalid Credentials");
         }
+        public async Task<bool> BindReactorToUser(BindReactorDTO dto)
+        {
+            const string sql = @"
+            UPDATE ""User""
+            SET ""reactorId"" = @ReactorId
+            WHERE id = @UserId;
+            ";
+
+            await using var conn = GetSqlConnection();
+            await conn.OpenAsync();
+
+            await using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("ReactorId", dto.reactorId);
+            cmd.Parameters.AddWithValue("UserId", dto.userId);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+            return rowsAffected > 0;
+        }
 
         private UserDTO MapToUserDTO(NpgsqlDataReader reader)
         {

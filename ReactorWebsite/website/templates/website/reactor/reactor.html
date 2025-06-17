@@ -27,7 +27,7 @@
         }).then((result) => {
              if (result.isConfirmed) {
                 const reactorId = result.value.trim();
-                fetch('/Reactor/Connect/', {
+                fetch('/ajax/BindToReactor/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

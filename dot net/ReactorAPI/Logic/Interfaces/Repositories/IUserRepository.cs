@@ -12,5 +12,6 @@ namespace Logic.Interfaces.Repositories
         UserDTO GetUser(int id);
         Task<UserDTO> CreateUser(RegisterDTO registerDto);
         UserDTO AuthenticateUser(LoginDTO loginDto);
+        Task<bool> BindReactorToUser(BindReactorDTO bindReactorDto);
     }
 }

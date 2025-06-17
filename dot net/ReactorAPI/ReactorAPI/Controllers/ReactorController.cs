@@ -1,4 +1,5 @@
-﻿using Logic.Services;
+﻿using Logic.DTO_s;
+using Logic.Services;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -32,10 +33,17 @@ namespace ReactorAPI.Controllers
 
         // POST api/<ReactorController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> Post([FromBody] ReactorHistoryDTO reactorHistoryDto)
         {
-            Console.WriteLine(value);
-            return;
+            try
+            {
+                await _reactorService.AddReactorData(reactorHistoryDto);
+                return Ok(200);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT api/<ReactorController>/5

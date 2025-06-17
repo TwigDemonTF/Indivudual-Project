@@ -9,7 +9,7 @@ namespace Logic.Interfaces.Repositories
 {
     public interface IReactorInterface
     {
-        Task AddReactorData(int reactorId, int temperature, int fieldStrength, int energySaturation, int fuelExhaustion, DateTime timeStamp);
+        Task AddReactorData(ReactorHistoryDTO reactorHistoryDto);
         ReactorDTO GetReactor(int userId);
     }
 }

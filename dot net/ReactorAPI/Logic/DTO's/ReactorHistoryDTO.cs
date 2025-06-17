@@ -8,11 +8,12 @@ namespace Logic.DTO_s
 {
     public class ReactorHistoryDTO
     {
+
+        public double Temperature { get; set; }
+        public double EnergySaturation { get; set; }
         public int ReactorId { get; set; }
-        public int Temperature { get; set; }
-        public int FieldStrength { get; set; }
-        public int EnergySaturation { get; set; }
-        public int FuelExhaustion { get; set; }
-        public DateTime TimeStamp { get; set; }
+        public double FieldStrength { get; set; }
+        public double FuelExhaustion { get; set; }
+        //public DateTime TimeStamp { get; set; }
     }
 }

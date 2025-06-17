@@ -3,7 +3,7 @@ from django.urls import path
 from .views import main_views as main
 from .views import user_views as user
 from .views import reactor_views as reactor
-
+from .ajax import BindToReactor
 
 urlpatterns = [
     path('', main.index, name='index'),
@@ -12,4 +12,7 @@ urlpatterns = [
     path('Logout/', user.logout, name='logout'),
 
     path('Reactor/', reactor.reactor, name='reactor'),
+
+    path('ajax/BindToReactor/', BindToReactor, name='BindToReactor'),
+
 ]

@@ -85,9 +85,28 @@ namespace ReactorAPI.Controllers
         }
 
         // GET: UserController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpPost("User/BindReactor")]
+        public async Task<IActionResult> BindToReactor([FromBody] BindReactorDTO bindReactorDto)
         {
-            return View();
+            try
+            {
+                // Get userId from session
+                //if (!HttpContext.Session.TryGetValue("userId", out var userIdBytes))
+                //    return Unauthorized("User not logged in");
+
+                //bindReactorDto.userId = BitConverter.ToInt32(userIdBytes, 0);
+
+                bool success = await _userService.BindReactorToUser(bindReactorDto);
+
+                if (success)
+                    return Ok(new { success = true });
+
+                return BadRequest(new { success = false, message = "Failed to bind reactor." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
         }
 
         // POST: UserController/Edit/5

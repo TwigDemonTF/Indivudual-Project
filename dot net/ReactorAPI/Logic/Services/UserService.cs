@@ -34,5 +34,14 @@ namespace Logic.Services
         {
             return _repository.AuthenticateUser(loginDto);
         }
+
+        public async Task<bool> BindReactorToUser(BindReactorDTO bindReactorDto)
+        {
+            if (bindReactorDto == null)
+                throw new ArgumentNullException(nameof(bindReactorDto));
+
+            return await _repository.BindReactorToUser(bindReactorDto);
+        }
+
     }
 }

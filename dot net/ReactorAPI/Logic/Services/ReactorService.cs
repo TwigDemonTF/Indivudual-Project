@@ -18,9 +18,9 @@ namespace Logic.Services
             _repository = repository;
         }
 
-        public Task AddReactorData(int reactorId, int temperature, int fieldStrength, int energySaturation, int fuelExhaustion, DateTime timeStamp)
+        public Task AddReactorData(ReactorHistoryDTO reactorHistoryDto)
         {
-            return _repository.AddReactorData(reactorId, temperature, fieldStrength, energySaturation, fuelExhaustion, timeStamp);
+            return _repository.AddReactorData(reactorHistoryDto);
         }
 
         public ReactorDTO GetReactor(int userId)
