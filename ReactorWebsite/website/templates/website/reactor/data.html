@@ -1,0 +1,107 @@
+{% include "../components/nav.html" %}
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<style>
+    body { font-family: Arial, sans-serif; text-align: center; overflow-x: hidden; overflow-y: hidden;}
+    table { width: 50%; margin: auto; border-collapse: collapse; margin-bottom: 20px; color: white;}
+    th, td { padding: 10px; border: 1px solid black; text-align: center; }
+    #chart { max-width: 80%; margin: auto;}
+
+
+</style>
+<body>
+    <h1 style="color: white !important;">Live Reactor Status</h1>
+    
+    <table>
+        <tr><th>Temperature</th><td id="temperature">Loading...</td></tr>
+        <tr><th>Field Strength</th><td id="field_strength">Loading...</td></tr>
+        <tr><th>Saturation</th><td id="saturation">Loading...</td></tr>
+        <tr><th>Fuel Conversion</th><td id="fuelExhaustion">Loading...</td></tr>
+        <tr><th>Status</th><td id="status">Loading...</td></tr>
+    </table>
+
+    <h2 style="color: white !important;">Reactor Data Over Time</h2>
+    <div id="chart"></div>
+
+    <script>
+        let dataSeries = []; // Store all data points dynamically
+    
+        let options = {
+            chart: {
+                type: 'line',
+                height: 600,
+                animations: { enabled: true },
+                zoom: { enabled: false }
+            },
+            series: [
+                { name: "Field Strength", data: [] },
+                { name: "Saturation", data: [] },
+                { name: "Fuel Conversion", data: [] },
+                { name: "Temperature", data: [] }
+            ],
+            xaxis: {
+                type: 'datetime',
+                labels: {
+                    datetimeUTC: false
+                }
+                // min: undefined, // Dynamically set based on first data point
+                // max: undefined
+            },
+            yaxis: [
+                { title: { text: "Field Strength" }, min: 0, max: 1_000_000_00 },
+                { opposite: true, title: { text: "Saturation" }, min: 0, max: 1_000_000_000 },
+                { opposite: true, title: { text: "Fuel Conversion / Temperature" }, min: 0, max: 11000 }
+            ],
+            tooltip: {
+                x: { format: 'HH:mm:ss' }
+            }
+        };
+    
+        let chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    
+        function fetchData() {
+            fetch('/reactor/latest/data')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) return;
+                    const latestData = data.at(-1)
+    
+                    document.getElementById("temperature").textContent = latestData.temperature;
+                    document.getElementById("field_strength").textContent = latestData.fieldStrength;
+                    document.getElementById("saturation").textContent = latestData.energySaturation;
+                    document.getElementById("fuelExhaustion").textContent = latestData.fuelExhaustion;
+                    // document.getElementById("status").textContent = latestData.status;
+                    document.getElementById("status").textContent = "Active";
+    
+                    // // Update the chart series
+
+                    function formatSeries(attrname) {
+                        return data.map(d => {
+                            return [new Date(d.timeStamp).getTime(), d[attrname]];
+                        });
+                    }
+                    
+                    let updatedSeries = [
+                        { name: "Field Strength", data: formatSeries("fieldStrength") },
+                        { name: "Saturation", data: formatSeries("energySaturation") },
+                        { name: "Fuel Conversion", data: formatSeries("fuelExhaustion") },
+                        { name: "Temperature", data: formatSeries("temperature") }
+                    ];
+
+                    console.log(updatedSeries)
+
+                    const newOptions = {
+                        series: updatedSeries,
+                    }
+    
+                    chart.updateOptions(newOptions);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        }
+    
+        setInterval(fetchData, 1000 * 60);
+        fetchData();
+    </script>    
+</body>
+</html>

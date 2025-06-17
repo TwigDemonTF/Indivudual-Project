@@ -14,5 +14,6 @@ urlpatterns = [
     path('Reactor/', reactor.reactor, name='reactor'),
 
     path('ajax/BindToReactor/', BindToReactor, name='BindToReactor'),
+    path('reactor/latest/data', reactor.reactor_latest_data, name='reactor_latest_data'),
 
 ]
