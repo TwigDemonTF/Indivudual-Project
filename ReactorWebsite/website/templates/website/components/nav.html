@@ -3,11 +3,13 @@
 <nav id="nav">
     <ul id="navBarList">
         <li><a href="/">Reactor Tracker</a></li>
-        <li><a href="/Login/">Login</a></li>
-        <li><a href="/Register/">Register</a></li>
+        {% if not request.session.userId %}
+            <li><a href="/Login/">Login</a></li>
+            <li><a href="/Register/">Register</a></li>
+        {% endif %}
         {% if request.session.userId %}
-        <li><a href="/Reactor/">Reactor</a></li>
-        <li><a href="/Logout/">Logout</a></li>
+            <li><a href="/Reactor/">Reactor</a></li>
+            <li><a href="/Logout/">Logout</a></li>
         {% endif %}
     </ul>
 </nav>

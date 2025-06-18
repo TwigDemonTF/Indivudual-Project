@@ -24,6 +24,7 @@ def BindToReactor(request):
             response = requests.post("http://localhost:5168//User/BindReactor", json=payload, verify=False)
 
             if response.status_code == 200:
+                request.session['reactorId'] = reactor_id
                 return JsonResponse({'success': True})
             else:
                 return JsonResponse({

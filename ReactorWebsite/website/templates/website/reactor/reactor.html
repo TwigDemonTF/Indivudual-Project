@@ -43,6 +43,8 @@
                             title: 'Connected',
                             text: `Successfully connected to reactor ${reactorId}`,
                             confirmButtonText: 'OK',
+                        }).then(() => {
+                            window.location.reload();
                         });
                     } else {
                         Swal.fire({

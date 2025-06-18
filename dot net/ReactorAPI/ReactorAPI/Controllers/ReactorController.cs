@@ -1,5 +1,6 @@
 ﻿using Logic.DTO_s;
 using Logic.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -58,9 +59,13 @@ namespace ReactorAPI.Controllers
         {
         }
 
+        [Authorize]
         [HttpGet("Latest")]
         public IActionResult GetLatestData([FromQuery] int reactorId)
         {
+            var token = HttpContext.Request.Headers["Authorization"].ToString();
+            Console.WriteLine("Received token: " + token); // 👈 TEMP LOG
+
             if (reactorId <= 0)
                 return BadRequest(new { error = "Invalid reactorId" });
 

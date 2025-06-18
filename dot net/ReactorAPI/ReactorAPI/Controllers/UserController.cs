@@ -3,7 +3,11 @@ using Logic.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ReactorAPI.Controllers
 {
@@ -60,22 +64,31 @@ namespace ReactorAPI.Controllers
         /// Authenticates a user with email and password.
         /// </summary>
         [HttpPost("User/Login")]
-        public ActionResult Login([FromBody] LoginDTO loginDto)
+        public IActionResult Login([FromBody] LoginDTO loginDto)
         {
-            try
-            {
-                UserDTO? userDto = _userService.AuthenticateUser(loginDto);
-                if (userDto == null) {
-                    return Unauthorized(new { message = "Invalid credentials" });
-                }
-                return Ok(new { message = "Login Successful", user = userDto});
+            var user = _userService.AuthenticateUser(loginDto);
+            if (user == null) return Unauthorized();
 
-            }
-            catch (Exception ex)
+            var claims = new[]
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Login Failed");
-            }
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("minecraftUsername", user.minecraftUsername)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super_secret_key_1234567890123456"));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddHours(1),
+                signingCredentials: creds);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                user = user
+            });
         }
 
         [HttpPost("User/Register")]

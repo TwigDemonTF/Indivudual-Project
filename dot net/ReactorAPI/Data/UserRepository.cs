@@ -25,10 +25,17 @@ namespace Data
         public async Task<UserDTO> CreateUser(RegisterDTO registerDto)
         {
             const string sql = @"
-                INSERT INTO ""User"" (""minecraftUsername"", email, password, ""reactorId"")
-                VALUES (@MinecraftUsername, @Email, @Password, @ReactorId)
-                RETURNING id, email, ""minecraftUsername"", password, ""reactorId"";
+            INSERT INTO ""User"" (""minecraftUsername"", email, password, ""passwordSalt"", ""reactorId"")
+            VALUES (@MinecraftUsername, @Email, @Password, @PasswordSalt, @ReactorId)
+            RETURNING id, email, ""minecraftUsername"", password, ""reactorId"";
             ";
+
+            // Generate salt and hash
+            var salt = SecurityHelper.GenerateSalt();
+            var hash = SecurityHelper.HashPassword(registerDto.Password, salt);
+
+            string hashBase64 = Convert.ToBase64String(hash);
+            string saltBase64 = Convert.ToBase64String(salt);
 
             await using var conn = GetSqlConnection();
             await conn.OpenAsync();
@@ -36,8 +43,9 @@ namespace Data
             await using var cmd = new NpgsqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("MinecraftUsername", registerDto.minecraftUsername ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("Email", registerDto.Email ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("Password", registerDto.Password ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("ReactorId", 0); // force initialize to 0
+            cmd.Parameters.AddWithValue("Password", hashBase64);
+            cmd.Parameters.AddWithValue("PasswordSalt", saltBase64);
+            cmd.Parameters.AddWithValue("ReactorId", 0); // default
 
             await using var reader = await cmd.ExecuteReaderAsync();
             if (await reader.ReadAsync())
@@ -47,7 +55,7 @@ namespace Data
                     Id = reader.GetInt32(reader.GetOrdinal("id")),
                     Email = reader.GetString(reader.GetOrdinal("email")),
                     minecraftUsername = reader.GetString(reader.GetOrdinal("minecraftUsername")),
-                    Password = reader.GetString(reader.GetOrdinal("password")),
+                    Password = Convert.ToBase64String(hash),
                     reactorId = reader.GetInt32(reader.GetOrdinal("reactorId"))
                 };
             }
@@ -86,7 +94,7 @@ namespace Data
         /// <param name="loginDto">Login credentials.</param>
         public UserDTO AuthenticateUser(LoginDTO loginDto)
         {
-            string sql = "SELECT * FROM \"User\" WHERE email = @Email AND password = @Password";
+            string sql = "SELECT * FROM \"User\" WHERE email = @Email";
 
             using var conn = GetSqlConnection();
             conn.Open();
@@ -94,12 +102,20 @@ namespace Data
             using var command = conn.CreateCommand();
             command.CommandText = sql;
             command.Parameters.AddWithValue("Email", loginDto.Email);
-            command.Parameters.AddWithValue("Password", loginDto.Password);
 
             using var reader = command.ExecuteReader();
             if (reader.Read())
             {
-                return MapToUserDTO(reader);
+                var storedHashString = reader["password"].ToString();
+                var storedSaltString = reader["passwordSalt"].ToString();
+                // Directly cast to byte[] for BYTEA columns
+                var storedHash = Convert.FromBase64String(storedHashString);
+                var storedSalt = Convert.FromBase64String(storedSaltString);
+
+                if (SecurityHelper.VerifyPassword(loginDto.Password, storedHash, storedSalt))
+                {
+                    return MapToUserDTO(reader);
+                }
             }
 
             throw new Exception("Invalid Credentials");
