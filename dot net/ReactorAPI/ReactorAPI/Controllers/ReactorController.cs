@@ -63,9 +63,6 @@ namespace ReactorAPI.Controllers
         [HttpGet("Latest")]
         public IActionResult GetLatestData([FromQuery] int reactorId)
         {
-            var token = HttpContext.Request.Headers["Authorization"].ToString();
-            Console.WriteLine("Received token: " + token); // 👈 TEMP LOG
-
             if (reactorId <= 0)
                 return BadRequest(new { error = "Invalid reactorId" });
 
