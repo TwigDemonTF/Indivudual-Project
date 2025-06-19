@@ -1,6 +1,8 @@
 ﻿using DataAccess.MSSQL;
 using Logic.DTO_s;
 using Logic.Interfaces.Repositories;
+using Microsoft.Extensions.Hosting;
+using Microsoft.VisualBasic;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -15,11 +17,11 @@ namespace Data
         public async Task AddReactorData(ReactorHistoryDTO reactorHistoryDto)
         {
             const string sql = @"
-        INSERT INTO ""ReactorHistory""
-            (""reactorId"", ""energySaturation"", ""temperature"", ""fieldStrength"", ""fuelExhaustion"", ""timeStamp"")
-        VALUES
-            (@ReactorId, @EnergySaturation, @Temperature, @FieldStrength, @FuelExhaustion, CURRENT_TIMESTAMP);
-    ";
+            INSERT INTO ""ReactorHistory""
+                (""reactorId"", ""energySaturation"", ""temperature"", ""fieldStrength"", ""fuelExhaustion"", ""timeStamp"")
+            VALUES
+                (@ReactorId, @EnergySaturation, @Temperature, @FieldStrength, @FuelExhaustion, CURRENT_TIMESTAMP);
+            ";
 
             await using var conn = GetSqlConnection();
             await conn.OpenAsync();
@@ -65,9 +67,24 @@ namespace Data
             return results;
         }
 
-        public ReactorDTO GetReactor(int userId)
+        public ReactorValuesDTO GetReactorValues(int reactorId)
         {
-            throw new NotImplementedException();
+            string sql = @"SELECT * FROM ""Reactor"" WHERE id = @Id";
+
+            using var conn = GetSqlConnection();
+            conn.Open();
+
+            using var command = conn.CreateCommand();
+            command.CommandText = sql;
+            command.Parameters.AddWithValue("Id", reactorId);
+
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                return MapToReactorValuesDto(reader);
+            }
+
+            throw new Exception("No User Found");
         }
 
         public async Task<int?> GetUserIdByReactorIdAsync(int reactorId)
@@ -82,6 +99,36 @@ namespace Data
 
             var result = await cmd.ExecuteScalarAsync();
             return result == null ? null : (int?)result;
+        }
+
+        public async Task<bool> UpdateReactorValues(int id, ReactorValuesDTO reactorValuesDto)
+        {
+            const string sql = @"
+            UPDATE ""Reactor""
+            SET ""inputEnergy"" = @InputValue,
+                ""outputEnergy"" = @OutputValue
+            WHERE ""id"" = @Id;
+            ";
+
+            await using var conn = GetSqlConnection();
+            await conn.OpenAsync();
+
+            await using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("InputValue", reactorValuesDto.InputValue);
+            cmd.Parameters.AddWithValue("OutputValue", reactorValuesDto.Outputvalue);
+            cmd.Parameters.AddWithValue("Id", id);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+            return rowsAffected > 0;
+        }
+
+        private ReactorValuesDTO MapToReactorValuesDto(NpgsqlDataReader reader)
+        {
+            return new ReactorValuesDTO()
+            {
+                InputValue = Convert.ToInt32(reader["inputEnergy"]),
+                Outputvalue = Convert.ToInt32(reader["outputEnergy"]),
+            };
         }
     }
 }

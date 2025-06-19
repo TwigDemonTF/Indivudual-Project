@@ -22,10 +22,12 @@ namespace Logic.Interfaces.Repositories
         /// Retrieves a reactor by the associated user ID.
         /// </summary>
         /// <param name="userId">The ID of the user whose reactor is requested.</param>
-        ReactorDTO GetReactor(int userId);
+        ReactorValuesDTO GetReactorValues(int reactorId);
 
         List<ReactorStatusDTO> GetLatestReactorData(DateTime fromUtc, int reactorId);
 
         Task<int?> GetUserIdByReactorIdAsync(int reactorId);
+
+        Task<bool> UpdateReactorValues(int id, ReactorValuesDTO reactorValuesDto);
     }
 }

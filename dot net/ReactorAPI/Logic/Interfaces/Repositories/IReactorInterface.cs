@@ -10,7 +10,8 @@ namespace Logic.Interfaces.Repositories
     public interface IReactorInterface
     {
         Task AddReactorData(ReactorHistoryDTO reactorHistoryDto);
-        ReactorDTO GetReactor(int userId);
+        ReactorValuesDTO GetReactorValues(int reactorId);
         List<ReactorStatusDTO> GetLatestReactorData(DateTime fromUtc, int reactorId);
+        Task<bool> UpdateReactorValues(int id, ReactorValuesDTO reactorValuesDto);
     }
 }

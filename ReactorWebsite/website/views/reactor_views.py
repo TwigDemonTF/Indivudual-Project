@@ -13,8 +13,6 @@ def reactor_latest_data(request):
     reactor_id = request.session.get('reactorId')
     token = request.session.get('token')
 
-    print(token)
-
     if not reactor_id or not token:
         return JsonResponse({'error': 'No reactor ID or JWT token in session'}, status=400)
 

@@ -1,5 +1,6 @@
 {% include "../components/nav.html" %}
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <style>
     body { font-family: Arial, sans-serif; text-align: center; overflow-x: hidden; overflow-y: hidden;}
@@ -10,6 +11,7 @@
 
 </style>
 <body>
+    <button onClick="changeReactorValues()" style="width: fit-content; height: 50px; position: absolute; right: 0;" id="changeReactorValues">Change Input/Output Values</button>
     <h1 style="color: white !important;">Live Reactor Status</h1>
     
     <table>
@@ -102,6 +104,55 @@
     
         setInterval(fetchData, 1000 * 60);
         fetchData();
+
+    const changeReactorValues = () => {
+        Swal.fire({
+            title: 'Change Reactor Input/Output Values',
+            html: `
+                <input id="inputValue" class="swal2-input" placeholder="Input Value">
+                <input id="outputValue" class="swal2-input" placeholder="Output Value">
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Change',
+            cancelButtonText: 'Cancel',
+            preConfirm: () => {
+                const input = document.getElementById("inputValue").value;
+                const output = document.getElementById("outputValue").value;
+
+                if (!input || !output) {
+                    Swal.showValidationMessage('Please enter both values.');
+                    return false;
+                }
+
+                return { input, output };
+            }
+        }).then((result) => {
+            if (result.isConfirmed && result.value) {
+                const { input, output } = result.value;
+
+                // Send AJAX request to Django endpoint
+                fetch('/ajax/UpdateReactorValues/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ input, output })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to update values.");
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire('Success', data.message, 'success');
+                })
+                .catch(err => {
+                    Swal.fire('Error', err.message, 'error');
+                });
+            }
+        });
+    }
     </script>    
 </body>
 </html>

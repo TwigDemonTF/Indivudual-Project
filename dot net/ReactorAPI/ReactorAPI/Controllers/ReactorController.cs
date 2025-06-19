@@ -26,10 +26,24 @@ namespace ReactorAPI.Controllers
         }
 
         // GET api/<ReactorController>/5
-        [HttpGet("{userId}")]
-        public string Get(int userId)
+        [HttpGet("{reactorId}")]
+        public ActionResult<ReactorValuesDTO> Get(int reactorId)
         {
-            return "value";
+            try
+            {
+                ReactorValuesDTO? reactorValuesDto = _reactorService.GetReactorValues(reactorId);
+                if (reactorValuesDto == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(reactorValuesDto); // 200 with JSON body
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         // POST api/<ReactorController>
@@ -49,8 +63,24 @@ namespace ReactorAPI.Controllers
 
         // PUT api/<ReactorController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] ReactorValuesDTO reactorValuesDto)
         {
+            try
+            {
+                bool success = await _reactorService.UpdateReactorValues(id, reactorValuesDto);
+                if (success)
+                {
+                    return Ok(new { success = true, message = "Reactor values updated successfully." });
+                }
+                else
+                {
+                    return NotFound(new { success = false, message = "Reactor not found." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
         }
 
         // DELETE api/<ReactorController>/5

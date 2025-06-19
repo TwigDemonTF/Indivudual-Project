@@ -38,9 +38,15 @@ namespace Logic.Services
             return _reactorRepository.GetLatestReactorData(fromUtc, reactorId);
         }
 
-        public ReactorDTO GetReactor(int userId)
+        public ReactorValuesDTO GetReactorValues(int reactorId)
         {
-            throw new NotImplementedException();
+            return _reactorRepository.GetReactorValues(reactorId);
         }
+
+        public Task<bool> UpdateReactorValues(int id, ReactorValuesDTO reactorValuesDto)
+        {
+            return _reactorRepository.UpdateReactorValues(id, reactorValuesDto);
+        }
+
     }
 }
