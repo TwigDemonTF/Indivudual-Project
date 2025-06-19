@@ -69,5 +69,19 @@ namespace Data
         {
             throw new NotImplementedException();
         }
+
+        public async Task<int?> GetUserIdByReactorIdAsync(int reactorId)
+        {
+            const string sql = @"SELECT ""id"" FROM ""User"" WHERE ""reactorId"" = @ReactorId";
+
+            await using var conn = GetSqlConnection();
+            await conn.OpenAsync();
+
+            await using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("ReactorId", reactorId);
+
+            var result = await cmd.ExecuteScalarAsync();
+            return result == null ? null : (int?)result;
+        }
     }
 }

@@ -11,21 +11,31 @@ namespace Logic.Services
 {
     public class ReactorService : IReactorInterface
     {
-        private readonly IReactorRepository? _repository;
+        private readonly IReactorRepository? _reactorRepository;
+        private readonly INotificationRepository? _notificationRepository;
 
-        public ReactorService(IReactorRepository repository)
+        public ReactorService(IReactorRepository reactorRepository, INotificationRepository notificationRepository)
         {
-            _repository = repository;
+            _reactorRepository = reactorRepository;
+            _notificationRepository = notificationRepository;
         }
 
-        public Task AddReactorData(ReactorHistoryDTO reactorHistoryDto)
+        public async Task AddReactorData(ReactorHistoryDTO reactorHistoryDto)
         {
-            return _repository.AddReactorData(reactorHistoryDto);
+            await _reactorRepository.AddReactorData(reactorHistoryDto);
+
+            var userId = await _reactorRepository.GetUserIdByReactorIdAsync(reactorHistoryDto.ReactorId);
+            if (userId != null)
+            {
+                string title = $"Exceeded temperatures";
+                string content = $"Reactor #{reactorHistoryDto.ReactorId} has exceeded safe temperatures.";
+                await _notificationRepository.AddNotificationAsync(userId.Value, title, content);
+            }
         }
 
         public List<ReactorStatusDTO> GetLatestReactorData(DateTime fromUtc, int reactorId)
         {
-            return _repository.GetLatestReactorData(fromUtc, reactorId);
+            return _reactorRepository.GetLatestReactorData(fromUtc, reactorId);
         }
 
         public ReactorDTO GetReactor(int userId)

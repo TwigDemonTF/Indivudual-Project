@@ -25,5 +25,7 @@ namespace Logic.Interfaces.Repositories
         ReactorDTO GetReactor(int userId);
 
         List<ReactorStatusDTO> GetLatestReactorData(DateTime fromUtc, int reactorId);
+
+        Task<int?> GetUserIdByReactorIdAsync(int reactorId);
     }
 }

@@ -20,6 +20,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserInterface, UserService>();
 builder.Services.AddScoped<IReactorRepository, ReactorRepository>();
 builder.Services.AddScoped<IReactorInterface, ReactorService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationInterface, NotificationService>();
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
