@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ReactorService>();
+builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserInterface, UserService>();
 builder.Services.AddScoped<IReactorRepository, ReactorRepository>();

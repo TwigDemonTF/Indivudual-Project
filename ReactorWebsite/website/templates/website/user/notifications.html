@@ -1,0 +1,16 @@
+{% include "../components/nav.html" %}
+
+<body>
+    {% for notification in notifications %}
+        <div class="notification">
+            <p style="float: right;"> {{notification.datetime}} </p>
+            <h2> {{notification.title}} </h2>
+            <p> {{notification.content}} </p>
+            <form action="#" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="notificationId" Value="{{notification.id}}">
+                <button type="submit" style="width: fit-content;">Delete Notification</button>
+            </form>
+        </div>
+    {% endfor %}
+</body>
