@@ -215,6 +215,35 @@ body {
 }
 
 body {
+  overflow-x: hidden;
+}
+
+.pageContainer {
+  padding-top: 10px;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.notificationContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.notification {
+  width: 60%;
+  border: 2px solid #FF69B4;
+  border-radius: 12.5px;
+  color: white;
+  padding: 1rem;
+  background-color: #222;
+}
+
+body {
   padding: 0;
   margin: 0;
 }/*# sourceMappingURL=style.css.map */

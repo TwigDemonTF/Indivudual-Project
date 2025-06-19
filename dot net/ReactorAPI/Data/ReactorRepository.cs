@@ -1,5 +1,6 @@
 ﻿using DataAccess.MSSQL;
 using Logic.DTO_s;
+using Logic.Exceptions.Dal;
 using Logic.Interfaces.Repositories;
 using Microsoft.Extensions.Hosting;
 using Microsoft.VisualBasic;
@@ -16,24 +17,30 @@ namespace Data
     {
         public async Task AddReactorData(ReactorHistoryDTO reactorHistoryDto)
         {
-            const string sql = @"
-            INSERT INTO ""ReactorHistory""
-                (""reactorId"", ""energySaturation"", ""temperature"", ""fieldStrength"", ""fuelExhaustion"", ""timeStamp"")
-            VALUES
-                (@ReactorId, @EnergySaturation, @Temperature, @FieldStrength, @FuelExhaustion, CURRENT_TIMESTAMP);
-            ";
+            try { 
+                const string sql = @"
+                INSERT INTO ""ReactorHistory""
+                    (""reactorId"", ""energySaturation"", ""temperature"", ""fieldStrength"", ""fuelExhaustion"", ""timeStamp"")
+                VALUES
+                    (@ReactorId, @EnergySaturation, @Temperature, @FieldStrength, @FuelExhaustion, CURRENT_TIMESTAMP);
+                ";
 
-            await using var conn = GetSqlConnection();
-            await conn.OpenAsync();
+                await using var conn = GetSqlConnection();
+                await conn.OpenAsync();
 
-            await using var cmd = new NpgsqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("ReactorId", reactorHistoryDto.ReactorId);
-            cmd.Parameters.AddWithValue("EnergySaturation", reactorHistoryDto.EnergySaturation);
-            cmd.Parameters.AddWithValue("Temperature", reactorHistoryDto.Temperature);
-            cmd.Parameters.AddWithValue("FieldStrength", reactorHistoryDto.FieldStrength);
-            cmd.Parameters.AddWithValue("FuelExhaustion", reactorHistoryDto.FuelExhaustion);
+                await using var cmd = new NpgsqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("ReactorId", reactorHistoryDto.ReactorId);
+                cmd.Parameters.AddWithValue("EnergySaturation", reactorHistoryDto.EnergySaturation);
+                cmd.Parameters.AddWithValue("Temperature", reactorHistoryDto.Temperature);
+                cmd.Parameters.AddWithValue("FieldStrength", reactorHistoryDto.FieldStrength);
+                cmd.Parameters.AddWithValue("FuelExhaustion", reactorHistoryDto.FuelExhaustion);
 
-            await cmd.ExecuteNonQueryAsync();
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new CouldNotConnectToDatabaseDALException("Failed to insert reactor data.", ex);
+            }
         }
 
         public List<ReactorStatusDTO> GetLatestReactorData(DateTime fromUtc, int reactorId)
@@ -69,22 +76,28 @@ namespace Data
 
         public ReactorValuesDTO GetReactorValues(int reactorId)
         {
-            string sql = @"SELECT * FROM ""Reactor"" WHERE id = @Id";
+            try { 
+                string sql = @"SELECT * FROM ""Reactor"" WHERE id = @Id";
 
-            using var conn = GetSqlConnection();
-            conn.Open();
+                using var conn = GetSqlConnection();
+                conn.Open();
 
-            using var command = conn.CreateCommand();
-            command.CommandText = sql;
-            command.Parameters.AddWithValue("Id", reactorId);
+                using var command = conn.CreateCommand();
+                command.CommandText = sql;
+                command.Parameters.AddWithValue("Id", reactorId);
 
-            using var reader = command.ExecuteReader();
-            if (reader.Read())
-            {
-                return MapToReactorValuesDto(reader);
+                using var reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    return MapToReactorValuesDto(reader);
+                }
+
+                throw new DataNotFoundDALException($"Reactor with ID {reactorId} not found.");
             }
-
-            throw new Exception("No User Found");
+            catch (NpgsqlException ex)
+            {
+                throw new CouldNotConnectToDatabaseDALException("Database Connection Failed", ex);
+            }
         }
 
         public async Task<int?> GetUserIdByReactorIdAsync(int reactorId)
@@ -103,23 +116,29 @@ namespace Data
 
         public async Task<bool> UpdateReactorValues(int id, ReactorValuesDTO reactorValuesDto)
         {
-            const string sql = @"
-            UPDATE ""Reactor""
-            SET ""inputEnergy"" = @InputValue,
-                ""outputEnergy"" = @OutputValue
-            WHERE ""id"" = @Id;
-            ";
+            try { 
+                const string sql = @"
+                UPDATE ""Reactor""
+                SET ""inputEnergy"" = @InputValue,
+                    ""outputEnergy"" = @OutputValue
+                WHERE ""id"" = @Id;
+                ";
 
-            await using var conn = GetSqlConnection();
-            await conn.OpenAsync();
+                await using var conn = GetSqlConnection();
+                await conn.OpenAsync();
 
-            await using var cmd = new NpgsqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("InputValue", reactorValuesDto.InputValue);
-            cmd.Parameters.AddWithValue("OutputValue", reactorValuesDto.Outputvalue);
-            cmd.Parameters.AddWithValue("Id", id);
+                await using var cmd = new NpgsqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("InputValue", reactorValuesDto.InputValue);
+                cmd.Parameters.AddWithValue("OutputValue", reactorValuesDto.Outputvalue);
+                cmd.Parameters.AddWithValue("Id", id);
 
-            int rowsAffected = await cmd.ExecuteNonQueryAsync();
-            return rowsAffected > 0;
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                return rowsAffected > 0;
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new CouldNotConnectToDatabaseDALException("Failed to update reactor values.", ex);
+            }
         }
 
         private ReactorValuesDTO MapToReactorValuesDto(NpgsqlDataReader reader)

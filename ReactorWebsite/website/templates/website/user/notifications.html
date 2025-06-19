@@ -1,16 +1,18 @@
 {% include "../components/nav.html" %}
 
-<body>
+<div class="pageContainer">
+  <div class="notificationContainer">
     {% for notification in notifications %}
-        <div class="notification">
-            <p style="float: right;"> {{notification.datetime}} </p>
-            <h2> {{notification.title}} </h2>
-            <p> {{notification.content}} </p>
-            <form action="#" method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="notificationId" value="{{ notification.notificationId }}">
-                <button type="submit" style="width: fit-content;">Delete Notification</button>
-            </form>
-        </div>
+    <div class="notification">
+      <p class="notificationDatetime" style="float: right;">{{ notification.datetime }}</p>
+      <h2>{{ notification.title }}</h2>
+      <p>{{ notification.content }}</p>
+      <form action="#" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="notificationId" value="{{ notification.notificationId }}">
+        <button type="submit" style="width: fit-content;">Delete Notification</button>
+      </form>
+    </div>
     {% endfor %}
-</body>
+  </div>
+</div>

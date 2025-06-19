@@ -64,7 +64,7 @@ def notification(request) -> HttpResponse:
         if request.method == "POST":
             try:
                 notificationId = request.POST.get('notificationId')
-                print(notificationId)
+
                 headers = {
                     'Authorization': f"Bearer {request.session.get('token')}"
                 }
@@ -92,7 +92,7 @@ def notification(request) -> HttpResponse:
             )
             res.raise_for_status()
             notifications = res.json()
-            print(notifications)
+
             context = {
                 'notifications': notifications,
             }

@@ -1,7 +1,10 @@
 ﻿using Logic.DTO_s;
 using Logic.Services;
+using Logic.Exceptions.Dal;
+using Logic.Exceptions.Logic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Numerics;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,13 +21,6 @@ namespace ReactorAPI.Controllers
             _reactorService = reactorService;
         }
 
-        // GET: api/<ReactorController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         // GET api/<ReactorController>/5
         [HttpGet("{reactorId}")]
         public ActionResult<ReactorValuesDTO> Get(int reactorId)
@@ -32,17 +28,20 @@ namespace ReactorAPI.Controllers
             try
             {
                 ReactorValuesDTO? reactorValuesDto = _reactorService.GetReactorValues(reactorId);
-                if (reactorValuesDto == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(reactorValuesDto); // 200 with JSON body
+                return Ok(reactorValuesDto);
+            }
+            catch (ReactorNotFoundLogicException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (CouldNotConnectToDatabaseLogicException ex)
+            {
+                return StatusCode(503, new { error = "Service unavailable: " + ex.Message });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal server error");
+                Console.WriteLine(ex);
+                return StatusCode(500, new { error = "Unexpected error occurred." });
             }
         }
 
@@ -53,11 +52,16 @@ namespace ReactorAPI.Controllers
             try
             {
                 await _reactorService.AddReactorData(reactorHistoryDto);
-                return Ok(200);
+                return Ok();
+            }
+            catch (CouldNotConnectToDatabaseLogicException ex)
+            {
+                return StatusCode(503, new { error = ex.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Console.WriteLine(ex);
+                return StatusCode(500, new { error = "Unexpected error occurred while adding reactor data." });
             }
         }
 
@@ -67,26 +71,22 @@ namespace ReactorAPI.Controllers
         {
             try
             {
-                bool success = await _reactorService.UpdateReactorValues(id, reactorValuesDto);
-                if (success)
-                {
-                    return Ok(new { success = true, message = "Reactor values updated successfully." });
-                }
-                else
-                {
-                    return NotFound(new { success = false, message = "Reactor not found." });
-                }
+                await _reactorService.UpdateReactorValues(id, reactorValuesDto);
+                return Ok();
+            }
+            catch (ReactorNotFoundLogicException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (CouldNotConnectToDatabaseLogicException ex)
+            {
+                return StatusCode(503, new { error = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { success = false, message = ex.Message });
+                Console.WriteLine(ex);
+                return StatusCode(500, new { error = "Unexpected error occurred while updating reactor data." });
             }
-        }
-
-        // DELETE api/<ReactorController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
 
         [Authorize]

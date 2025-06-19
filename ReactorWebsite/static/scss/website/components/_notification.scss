@@ -1,0 +1,30 @@
+@use "../abstracts/" as *;
+
+body {
+    overflow-x: hidden;
+}
+
+.pageContainer {
+    padding-top: 10px;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.notificationContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; // spacing between notifications
+  width: 100%;
+}
+
+.notification {
+  width: 60%;
+  border: 2px solid map-get($colors, accent);
+  border-radius: $borderRadius;
+  color: white;
+  padding: 1rem;
+  background-color: #222; // optional background
+}
