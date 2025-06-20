@@ -23,7 +23,7 @@ def reactor_latest_data(request):
         
         #  * call the https link directly instead of the http one because it doesnt work with the jwt
         res = requests.get(
-            f"https://localhost:7083/api/Reactor/Latest?reactorId={reactor_id}",
+            f"http://localhost:7083/api/Reactor/Latest?reactorId={reactor_id}",
             headers=headers,
             verify=False, 
             timeout=5

@@ -65,7 +65,7 @@ namespace Logic.Services
                 }
             }
 
-            if (userId != null && reactorHistoryDto.FuelExhaustion < 7000)
+            if (userId != null && reactorHistoryDto.FuelExhaustion > 7000)
             {
                 string title = $"High Fuel Exhaustion";
                 string content = $"Reactor #{reactorHistoryDto.ReactorId} has almost gone through all of its fuel.";
