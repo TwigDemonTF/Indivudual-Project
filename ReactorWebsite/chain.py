@@ -10,6 +10,5 @@ def chain():
     requests.post("http://localhost:5168/api/Reactor", json=data, verify=False)
     return jsonify({'Status': 200})
 
-
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080, debug=True)
